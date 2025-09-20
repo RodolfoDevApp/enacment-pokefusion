@@ -1,1 +1,137 @@
-<p>fusion works!</p>
+<div class="container mx-auto max-w-5xl px-4 py-6">
+  <!-- header -->
+  <header class="mb-6 flex items-center justify-between">
+    <h1 class="text-3xl font-semibold tracking-tight">PokéFusion</h1>
+    <div class="hidden sm:flex items-center gap-2 text-xs text-slate-600">
+      <span class="rounded-full bg-slate-100 px-2 py-1">Angular 18</span>
+      <span class="rounded-full bg-slate-100 px-2 py-1">Signals</span>
+      <span class="rounded-full bg-slate-100 px-2 py-1">Tailwind</span>
+    </div>
+  </header>
+
+  <!-- actions -->
+  <div class="mb-5 flex flex-wrap gap-3">
+    <button
+      class="rounded-xl border px-4 py-2 shadow-sm hover:bg-slate-50 active:scale-[.98] transition"
+      (click)="refusionar()"
+      [disabled]="store.loading()"
+      [attr.aria-label]="'Generar nueva fusión'">
+      Re-fusionar
+    </button>
+
+    <button
+      class="rounded-xl bg-indigo-600 px-4 py-2 text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 transition"
+      (click)="addFav()"
+      [disabled]="!store.fusion() || store.loading()"
+      [attr.aria-label]="'Guardar fusión en favoritos'">
+      Guardar favorito
+    </button>
+
+    <button
+      class="rounded-xl border px-4 py-2 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition"
+      (click)="clearFav()"
+      [disabled]="store.favoritesCount() === 0"
+      [attr.aria-label]="'Limpiar favoritos'">
+      Limpiar favoritos
+    </button>
+  </div>
+
+  <!-- states -->
+  @if (store.loading()) {
+    <div class="rounded-2xl border bg-white p-4 text-slate-600 shadow-sm">Cargando…</div>
+  } @else if (store.error()) {
+    <div class="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm">
+      {{ store.error() }}
+    </div>
+  } @else if (!store.fusion()) {
+    <div class="rounded-2xl border bg-white p-4 text-slate-600 shadow-sm">Sin datos</div>
+  } @else {
+    <!-- card -->
+    <section class="rounded-2xl border bg-white p-5 shadow-sm">
+      <!-- title + types -->
+      <div class="mb-4 flex items-center justify-between gap-3">
+        <h2 class="text-2xl font-semibold tracking-tight">{{ store.fusion()!.name }}</h2>
+        <div class="flex flex-wrap gap-2 text-sm">
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+            {{ store.fusion()!.typeA }}
+          </span>
+          <span *ngIf="store.fusion()!.typeB"
+                class="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+            {{ store.fusion()!.typeB }}
+          </span>
+        </div>
+      </div>
+
+      <!-- content grid -->
+      <div class="grid gap-6 md:grid-cols-12">
+        <!-- sprites -->
+        <div class="md:col-span-5">
+          <div class="flex flex-wrap gap-3">
+            @for (url of store.fusion()!.spriteUrls; track url) {
+              <img [src]="url" alt="sprite base"
+                   class="h-28 w-28 rounded-xl border bg-slate-50 object-contain p-2 shadow-sm" />
+            }
+          </div>
+        </div>
+
+        <!-- stats + moves -->
+        <div class="md:col-span-7 grid gap-6 sm:grid-cols-2">
+          <div>
+            <h3 class="mb-2 text-lg font-semibold">Stats promedio</h3>
+            <ul class="divide-y divide-slate-100 rounded-xl border bg-slate-50/50">
+              @for (stat of (store.fusion()!.stats | keyvalue); track stat.key) {
+                <li class="flex items-center justify-between px-4 py-2 text-sm">
+                  <span class="capitalize text-slate-600">{{ stat.key }}</span>
+                  <span class="font-semibold text-slate-900">{{ stat.value }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="mb-2 text-lg font-semibold">Movimientos</h3>
+            <ul class="rounded-xl border bg-slate-50/50 px-4 py-3 text-sm">
+              @for (m of store.fusion()!.moves; track m) {
+                <li class="list-disc pl-3 marker:text-slate-400">{{ m }}</li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- bases -->
+      <div class="mt-4 text-xs text-slate-500">
+        Bases:
+        {{ store.fusion()!.bases[0].name }},
+        {{ store.fusion()!.bases[1].name }},
+        {{ store.fusion()!.bases[2].name }}
+      </div>
+    </section>
+  }
+
+  <!-- favorites -->
+  <section class="mt-8">
+    <h2 class="mb-2 text-xl font-semibold">Favoritos ({{ store.favoritesCount() }})</h2>
+
+    @if (store.favoritesCount() === 0) {
+      <p class="text-slate-600">No hay favoritos guardados.</p>
+    } @else {
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+        @for (f of store.favorites(); track f.name) {
+          <article class="rounded-2xl border bg-white p-4 shadow-sm">
+            <div class="mb-1 text-base font-semibold">{{ f.name }}</div>
+            <div class="text-sm text-slate-600 mb-2">
+              {{ f.typeA }}<span *ngIf="f.typeB"> / {{ f.typeB }}</span>
+            </div>
+            <button
+              class="rounded-lg border px-3 py-1.5 text-sm hover:bg-slate-50"
+              (click)="rmFav(f.name)"
+              [attr.aria-label]="'Quitar de favoritos ' + f.name">
+              Quitar
+            </button>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</div>
