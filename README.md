@@ -1,27 +1,50 @@
-# EnacmentPokefusion
+# PokéFusion (Angular 18 + PokeAPI)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+**Demo**: https://<tu-hosting>.web.app  
+**Reto**: PokéFusion (PokeAPI) – Enacment 2025
 
-## Development server
+## Reto y alcance
+- Fusión de **3 Pokémon** (nombre, tipos, stats promedio y 1–2 movimientos).
+- **Core**: aleatorizar desde **PokeAPI** y mostrar en tarjeta.
+- **Tu toque**: botón **Re-fusionar**.
+- **Persistencia**: **localStorage** (favoritos). Sin Firestore/RTDB.
+- **SPA** en **Firebase Hosting**.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Stack y arquitectura
+- Angular 18 (standalone, **signals**, `@if/@for`, `provideHttpClient(withFetch)`).
+- Tailwind CSS.
+- **Runtime config**: `public/app.config.json` via `APP_INITIALIZER` + `APP_CONFIG`.
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Instalación y ejecución
 
-## Build
+npm i
+ng serve -o
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Build & Deploy (Firebase Hosting)
 
-## Running unit tests
+ng build --configuration production
+npx firebase-tools@latest deploy --only hosting
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Decisiones técnicas
+Signals en lugar de NgRx (alcance pequeño).
 
-## Running end-to-end tests
+Config en runtime (sin fileReplacements).
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Favoritos en localStorage (sin credenciales/reglas).
 
-## Further help
+UI con Tailwind para velocidad y a11y básico.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Estados, rendimiento, a11y
+Estados: loading/error/empty cubiertos.
+
+Posible cache in-memory y fetch concurrente (ver store).
+
+A11y: [attr.aria-label], foco visible, contraste.
+
+## Uso de IA (resumen)
+Scaffold de store/servicio y heurística de fusión (nombres por cortes, tipos por frecuencia, stats por promedio).
+
+Ajustes de a11y, layout y runtime config.
+
+Riesgos: latencia/errores PokeAPI → retry/estado; aleatoriedad → Re-fusionar; performance → concurrente + cache.
