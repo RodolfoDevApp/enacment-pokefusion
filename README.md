@@ -1,6 +1,6 @@
 # PokéFusion (Angular 18 + PokeAPI)
 
-**Demo**: https://<tu-hosting>.web.app  
+**Demo**: https://enacment-pokefusion-2bea3.web.app/
 **Reto**: PokéFusion (PokeAPI) – Enacment 2025
 
 ## Reto y alcance
